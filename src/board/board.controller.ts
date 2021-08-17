@@ -1,20 +1,6 @@
-import {
-  Controller,
-  Param,
-  Get,
-  Post,
-  UsePipes,
-  ValidationPipe,
-  Body,
-  ParseIntPipe,
-  Delete,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Param, Get } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { Board } from './board.entity';
-import { CreateBoardDto } from './dto/create-board.dto';
-import { BoardStatus } from './board-status.enum';
-import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 
 @Controller('board')
 export class BoardController {
@@ -25,34 +11,10 @@ export class BoardController {
 
   constructor(private boardService: BoardService) {}
 
-  @Post()
-  @UsePipes(ValidationPipe)
-  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardService.createBoard(createBoardDto);
-  }
-
-  @Patch('/:id/status')
-  updateBoardStatus(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('status', BoardStatusValidationPipe) status: BoardStatus,
-  ): Promise<Board> {
-    return this.boardService.updateBoardStatus(id, status);
-  }
-
-  @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.boardService.deleteBoard(id);
-  }
-
   // DB 방식
   @Get('/:id')
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardService.getBoardById(id);
-  }
-
-  @Get()
-  getAllBoards(): Promise<Board[]> {
-    return this.boardService.getAllBoards();
   }
 
   // 메모리 방식

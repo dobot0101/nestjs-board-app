@@ -1,1 +1,2 @@
-- nestjs 게시판 앱
+- nestjs 게시판 앱을 개발 중입니다.
+- postgresql, TypeORM, Typescript를 사용합니다.
