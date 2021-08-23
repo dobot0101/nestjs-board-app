@@ -5,6 +5,7 @@ import { Board } from './board.entity';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatus } from './board-status.enum';
 import { exception } from 'console';
+import { Member } from 'src/auth/member.entity';
 
 @Injectable()
 export class BoardService {
@@ -14,8 +15,11 @@ export class BoardService {
   ) {}
 
   // 게시물 생성
-  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardRepository.createBoard(createBoardDto);
+  async createBoard(
+    createBoardDto: CreateBoardDto,
+    member: Member,
+  ): Promise<Board> {
+    return this.boardRepository.createBoard(createBoardDto, member);
   }
 
   // 게시물 삭제
@@ -44,8 +48,12 @@ export class BoardService {
     return board;
   }
 
-  async getAllBoards(): Promise<Board[]> {
-    return this.boardRepository.find();
+  async getAllBoards(member: Member): Promise<Board[]> {
+    const query = this.boardRepository.createQueryBuilder('board');
+    query.where('board.memberId = :memberId', { memberId: member.id });
+    const boards = await query.getMany();
+    return boards;
+    // return this.boardRepository.find();
   }
 
   // 메모리 방식

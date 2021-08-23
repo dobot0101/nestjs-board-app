@@ -17,6 +17,9 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatus } from './board-status.enum';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 import { AuthGuard } from '@nestjs/passport';
+import { GetMember } from 'src/auth/get-user-decorator';
+import { Member } from 'src/auth/member.entity';
+import { getCustomRepository } from 'typeorm';
 
 @Controller('board')
 @UseGuards(AuthGuard())
@@ -30,8 +33,11 @@ export class BoardController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardService.createBoard(createBoardDto);
+  createBoard(
+    @Body() createBoardDto: CreateBoardDto,
+    @GetMember() member: Member,
+  ): Promise<Board> {
+    return this.boardService.createBoard(createBoardDto, member);
   }
 
   @Patch('/:id/status')
@@ -54,8 +60,8 @@ export class BoardController {
   }
 
   @Get()
-  getAllBoards(): Promise<Board[]> {
-    return this.boardService.getAllBoards();
+  getAllBoards(@GetMember() member: Member): Promise<Board[]> {
+    return this.boardService.getAllBoards(member);
   }
 
   // 메모리 방식
