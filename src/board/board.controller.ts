@@ -10,6 +10,7 @@ import {
   Delete,
   Patch,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { Board } from './board.entity';
@@ -19,7 +20,6 @@ import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe'
 import { AuthGuard } from '@nestjs/passport';
 import { GetMember } from 'src/auth/get-user-decorator';
 import { Member } from 'src/auth/member.entity';
-import { getCustomRepository } from 'typeorm';
 
 @Controller('board')
 @UseGuards(AuthGuard())
@@ -28,7 +28,7 @@ export class BoardController {
   //   constructor(boardService: BoardService) {
   //     this.boardService = boardService;
   //   }
-
+  private logger = new Logger('BoardController');
   constructor(private boardService: BoardService) {}
 
   @Post()
@@ -37,6 +37,8 @@ export class BoardController {
     @Body() createBoardDto: CreateBoardDto,
     @GetMember() member: Member,
   ): Promise<Board> {
+    this.logger.verbose(`Member ${member.name} creating a new board.
+    Payload: ${JSON.stringify(createBoardDto)}`);
     return this.boardService.createBoard(createBoardDto, member);
   }
 
@@ -64,6 +66,7 @@ export class BoardController {
 
   @Get()
   getAllBoards(@GetMember() member: Member): Promise<Board[]> {
+    this.logger.verbose(`Member ${member.name} trying to get all boards`);
     return this.boardService.getAllBoards(member);
   }
 
