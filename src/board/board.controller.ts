@@ -49,8 +49,11 @@ export class BoardController {
   }
 
   @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.boardService.deleteBoard(id);
+  deleteBoard(
+    @Param('id', ParseIntPipe) id: number,
+    @GetMember() member: Member,
+  ): Promise<void> {
+    return this.boardService.deleteBoard(id, member);
   }
 
   // DB 방식
